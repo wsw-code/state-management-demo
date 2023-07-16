@@ -1,7 +1,13 @@
 import "./App.css";
 
+import Demo from "./demo/index";
+
 function App() {
-  return <>1</>;
+  return (
+    <div>
+      <Demo />
+    </div>
+  );
 }
 
 export default App;

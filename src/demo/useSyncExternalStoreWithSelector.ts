@@ -27,22 +27,23 @@ const useSyncExternalStoreWithSelector = (
 ) => {
   let inst: InstProps;
   const instRef = useRef<InstProps>(null as unknown as InstProps);
-  const memoizedSelector = useMemo(() => {
+
+  const _useMemo = useMemo(() => {
     /**是否第一次执行 */
     let hasMemo = false;
+    let memoizedSnapshot: any;
+    let memoizedSelection: any;
 
     if (instRef.current === null) {
       inst = {
         hasValue: false,
         value: null,
       };
+    } else {
       instRef.current = inst;
     }
 
-    let memoizedSnapshot: any;
-    let memoizedSelection: any;
-
-    return (nextSnapshot: ReturnType<typeof getSnapshot>) => {
+    const memoizedSelector = (nextSnapshot: ReturnType<typeof getSnapshot>) => {
       if (!hasMemo) {
         hasMemo = true;
         memoizedSnapshot = nextSnapshot;
@@ -83,9 +84,13 @@ const useSyncExternalStoreWithSelector = (
 
       return nextSelection;
     };
+
+    return () => {
+      return memoizedSelector(getSnapshot());
+    };
   }, [selector, getSnapshot, isEqual]);
 
-  const getSelection = memoizedSelector(getSnapshot());
+  const getSelection = _useMemo;
 
   const value = useSyncExternalStore(subscribe, getSelection);
 
@@ -95,6 +100,8 @@ const useSyncExternalStoreWithSelector = (
   }, [value]);
 
   useDebugValue(value);
+
+  return value;
 };
 
 export default useSyncExternalStoreWithSelector;
