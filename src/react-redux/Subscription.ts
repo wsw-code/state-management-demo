@@ -9,10 +9,21 @@ const createListenerCollection = () => {
   let last: Listener | null = null;
 
   return {
-    clear() {},
+    clear() {
+      first = null;
+      last = null;
+    },
 
     notify() {},
-    get() {},
+    get() {
+      let listeners: Listener[] = [];
+      let listener = first;
+      while (listener) {
+        listeners.push(listener);
+        listener = listener.next;
+      }
+      return listeners;
+    },
 
     subscribe(callback: () => void) {
       last = {
@@ -29,7 +40,21 @@ const createListenerCollection = () => {
         first = listener;
       }
 
-      return () => {};
+      return function unsubscribe() {
+        if (first === null) return;
+
+        if (listener.next) {
+          listener.next.prev = listener.prev;
+        } else {
+          last = listener.prev;
+        }
+
+        if (listener.prev) {
+          listener.prev.next = listener.next;
+        } else {
+          first = listener.next;
+        }
+      };
     },
   };
 };
