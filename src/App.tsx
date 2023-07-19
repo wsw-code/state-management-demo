@@ -1,11 +1,12 @@
 import "./App.css";
 
-import Demo from "./demo/index";
+// import Demo from "./demo/index";
+import Example from './react-redux/example'
 
 function App() {
   return (
     <div>
-      <Demo />
+      <Example />
     </div>
   );
 }
