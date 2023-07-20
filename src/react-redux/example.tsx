@@ -14,7 +14,7 @@ const store = legacy_createStore(reducer);
 
 const Child = () => {
 
-  const count = useSelector((state: any) => state.count)
+  const count = useSelector((state: { count: number, count2: number }) => state.count)
   const dispatch = store.dispatch
   console.log('渲染1')
 
@@ -42,14 +42,10 @@ const Child = () => {
 
 const Child2 = () => {
 
-  const count2 = useSelector((state: any) => state.count2)
+  const count2 = useSelector((state: { count: number, count2: number }) => state.count2)
 
 
-  // useEffect(() => {
-  //   console.log(count2)
-  // }, [count2])
 
-  console.log('渲染2')
 
   return (
     <div>

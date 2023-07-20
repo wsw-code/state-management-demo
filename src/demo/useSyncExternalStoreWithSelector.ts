@@ -6,9 +6,9 @@ import {
   useEffect,
 } from "react";
 
-type InstProps = {
+type InstProps<T> = {
   hasValue: boolean;
-  value: any;
+  value: T;
 };
 
 /**
@@ -19,25 +19,26 @@ type InstProps = {
  * @param isEqual 比较函数
  */
 
-const useSyncExternalStoreWithSelector = (
+const useSyncExternalStoreWithSelector = <T>(
   subscribe: (onStoreChange: () => void) => () => void,
   getSnapshot: () => any,
-  selector: (val: any) => any,
-  isEqual: (a: any, b: any) => boolean
+  selector: (val: any) => T,
+  isEqual: (a: T, b: T) => boolean
 ) => {
-  let inst: InstProps;
-  const instRef = useRef<InstProps>(null as unknown as InstProps);
+  let inst: InstProps<T>;
+  const instRef = useRef<InstProps<T>>(null as unknown as InstProps<T>);
 
   const _useMemo = useMemo(() => {
     /**是否第一次执行 */
     let hasMemo = false;
     let memoizedSnapshot: any;
-    let memoizedSelection: any;
+    let memoizedSelection: T;
 
     if (instRef.current === null) {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       inst = {
         hasValue: false,
-        value: null,
+        value: null as T,
       };
     } else {
       instRef.current = inst;
@@ -49,7 +50,7 @@ const useSyncExternalStoreWithSelector = (
         memoizedSnapshot = nextSnapshot;
         memoizedSelection = selector(memoizedSnapshot);
 
-        var _nextSelection = selector(nextSnapshot);
+        const  _nextSelection = selector(nextSnapshot);
 
         memoizedSelection = _nextSelection;
 
@@ -97,11 +98,12 @@ const useSyncExternalStoreWithSelector = (
   useEffect(() => {
     inst.value = value;
     inst.hasValue = true;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
   useDebugValue(value);
 
-  return value;
+  return value 
 };
 
 export default useSyncExternalStoreWithSelector;
