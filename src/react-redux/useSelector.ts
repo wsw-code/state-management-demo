@@ -1,7 +1,7 @@
 
 import {useContext} from 'react'
 import {Context} from './Provider'
-import useSyncExternalStoreWithSelector from '../demo/useSyncExternalStoreWithSelector'
+import useSyncExternalStoreWithSelector from '../useSyncExternalStoreWithSelector'
 
 
 
@@ -18,8 +18,6 @@ function createSelectorHook() {
 
     const {store,subscription} = useReduxContext();
 
-
-
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const value = useSyncExternalStoreWithSelector(subscription.addNestedSub,store.getState.bind(store),selector,isEqual || ((cur,pre)=>cur === pre))
 
@@ -27,8 +25,6 @@ function createSelectorHook() {
     return value
   }
 }
-
-
 
 
 
