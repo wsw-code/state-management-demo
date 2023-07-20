@@ -1,6 +1,6 @@
 
 
-import { useEffect } from 'react'
+
 import { legacy_createStore } from 'redux';
 import Provider from './Provider'
 import reducer from './reducer'

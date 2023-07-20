@@ -19,10 +19,10 @@ type InstProps<T> = {
  * @param isEqual 比较函数
  */
 
-const useSyncExternalStoreWithSelector = <T>(
+const useSyncExternalStoreWithSelector = <T,S>(
   subscribe: (onStoreChange: () => void) => () => void,
-  getSnapshot: () => any,
-  selector: (val: any) => T,
+  getSnapshot: () => S,
+  selector: (val: S) => T,
   isEqual: (a: T, b: T) => boolean
 ) => {
   let inst: InstProps<T>;
@@ -31,7 +31,7 @@ const useSyncExternalStoreWithSelector = <T>(
   const _useMemo = useMemo(() => {
     /**是否第一次执行 */
     let hasMemo = false;
-    let memoizedSnapshot: any;
+    let memoizedSnapshot: S;
     let memoizedSelection: T;
 
     if (instRef.current === null) {

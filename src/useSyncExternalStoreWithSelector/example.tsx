@@ -1,4 +1,4 @@
-import useSyncExternalStoreWithSelector from "./useSyncExternalStoreWithSelector";
+import useSyncExternalStoreWithSelector from "./index.ts";
 
 /**
  * 外部数据
