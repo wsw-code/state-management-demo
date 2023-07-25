@@ -1,12 +1,12 @@
 import { useDebugValue } from "react";
 import useSyncExternalStoreWithSelector from "../useSyncExternalStoreWithSelector";
 
-type SetStateInternal<T> = {
-  _(
-    partial: T | Partial<T> | { _(state: T): T | Partial<T> }["_"],
+type SetStateInternal<T> = 
+  (
+    partial: T | Partial<T> | ((state: T)=> T | Partial<T>) ,
     replace?: boolean | undefined
-  ): void;
-}["_"];
+  )=> void
+
 
 export interface StoreApi<T> {
   setState: SetStateInternal<T>;
@@ -15,23 +15,32 @@ export interface StoreApi<T> {
   /**
    * @deprecated Use `unsubscribe` returned by `subscribe`
    */
-  destroy: () => void;
+  destory: () => void;
 }
 
-const createStore = (createState: any) => {
+
+
+export type StateCreator<
+  T,
+  U = T
+> = ((
+  setState: StoreApi<T>['setState'],
+  getState: StoreApi<T>['getState'],
+  store: StoreApi<T>
+) => U)
+
+const createStore = <T>(createState:StateCreator<T>) => {
   type TState = ReturnType<typeof createState>;
   type Listener = (state: TState, prevState: TState) => void;
   let state: TState;
   const listeners: Set<Listener> = new Set();
 
-  const setState = (partial: any) => {
-    let nextState = typeof partial === "function" ? partial(state) : partial;
+  const setState:StoreApi<TState>['setState'] = (partial,replace) => {
+    const nextState = typeof partial === "function" ? (partial as (val:TState)=>TState)(state) : partial;
 
     if (!Object.is(nextState, state)) {
       const preState = state;
-
       state = { ...state, nextState };
-
       listeners.forEach((listener) => {
         listener(preState, state);
       });
@@ -52,24 +61,30 @@ const createStore = (createState: any) => {
   const getState = () => state;
 
   const api = {
-    state,
     setState,
     destory,
     subscribe,
     getState,
-  };
+  }
 
   state = createState(setState, getState, api);
 
-  return api as any;
+  return api;
 };
 
-const useStore = (api: any, selector: any, equalityFn: any) => {
+
+const defaultEqualityFn = (a:any,b:any) => a === b 
+
+const useStore = <TState,StateSlice>(
+  api: StoreApi<TState>,
+  selector:(state:TState)=>  StateSlice, 
+  equalityFn?:(a: StateSlice, b: StateSlice) => boolean
+  ) => {
   const value = useSyncExternalStoreWithSelector(
     api.subscribe,
     api.getState,
     selector,
-    equalityFn
+    equalityFn=defaultEqualityFn
   );
 
   useDebugValue(value);
@@ -77,10 +92,10 @@ const useStore = (api: any, selector: any, equalityFn: any) => {
   return value;
 };
 
-const create = (createState: any) => {
+const create = <T>(createState:StateCreator<T>) => {
   const api = createStore(createState);
 
-  const useBoundStore: any = (selector?: any, equalityFn?: any) =>
+  const useBoundStore: any = (selector: any, equalityFn?: any) =>
     useStore(api, selector, equalityFn);
 
   Object.assign(useBoundStore, api);
