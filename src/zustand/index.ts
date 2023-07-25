@@ -81,9 +81,9 @@ type ExtractState<S> = S extends { getState: () => infer T } ? T : never
 const defaultEqualityFn = (a:any,b:any) => a === b 
 
 
-// export function useStore<S>(
-//   api: S
-// ): ExtractState<S>
+export function useStore<S>(
+  api: S
+): ExtractState<S>
 
 export function useStore<S extends StoreApi<unknown>, U>(
   api: S,
@@ -93,7 +93,8 @@ export function useStore<S extends StoreApi<unknown>, U>(
 
 export function useStore<TState,StateSlice>(
   api: StoreApi<TState>,
-  selector:(state:TState)=>StateSlice=(api.getState as any),
+  // selector:(state:TState)=>StateSlice=(api.getState as any),
+  selector: (state: TState) => StateSlice = api.getState as any,
   equalityFn?:(a: StateSlice, b: StateSlice) => boolean
   ) {
   const value = useSyncExternalStoreWithSelector(
@@ -111,8 +112,7 @@ export function useStore<TState,StateSlice>(
 const create = <T>(createState:StateCreator<T>) => {
   const api = createStore(createState)
 
-  const useBoundStore:any = (selector?: any, equalityFn?: any) =>
-    useStore(api, selector, equalityFn);
+  const useBoundStore:any = (selector?: any, equalityFn?: any) => useStore(api, selector, equalityFn);
 
   Object.assign(useBoundStore, api);
 

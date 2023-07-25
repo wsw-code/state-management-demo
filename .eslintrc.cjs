@@ -6,7 +6,7 @@ module.exports = {
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
-    'plugin:@typescript-eslint/recommended-requiring-type-checking',
+    // 'plugin:@typescript-eslint/recommended-requiring-type-checking',
     'plugin:react-hooks/recommended',
   ],
   parser: '@typescript-eslint/parser',
@@ -22,10 +22,10 @@ module.exports = {
       'warn',
       { allowConstantExport: true },
     ],
-    '@typescript-eslint/no-non-null-assertion': 'off',
-    '@typescript-eslint/no-explicit-any': 'off',
-    '@typescript-eslint/no-empty-function':'off',
-    '@typescript-eslint/no-explicit-any': "off",
-    '@typescript-eslint/no-unsafe-assignment':'off'
+    // '@typescript-eslint/no-non-null-assertion': 'off',
+    // '@typescript-eslint/no-explicit-any': 'off',
+    // '@typescript-eslint/no-empty-function':'off',
+    // '@typescript-eslint/no-explicit-any': "off",
+    // '@typescript-eslint/no-unsafe-assignment':'off'
   },
 }
